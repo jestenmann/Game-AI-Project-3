@@ -33,7 +33,14 @@ public class HillEvent extends Event {
 						grid[y][x] = HILL_TOP;
 					}
 				} else {
-					grid[y][x] = HILL_FILL;
+					if (x == 0) {
+						grid[y][x] = HILL_LEFT;
+					} else if (x == length - 1) {
+						grid[y][x] = HILL_RIGHT;
+					} else {
+						grid[y][x] = HILL_FILL;
+					}
+					
 				}
 			}
 		}

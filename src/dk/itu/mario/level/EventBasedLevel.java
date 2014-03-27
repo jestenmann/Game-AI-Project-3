@@ -8,7 +8,9 @@ import dk.itu.mario.engine.sprites.SpriteTemplate;
 import dk.itu.mario.level.events.CannonClusterEvent;
 import dk.itu.mario.level.events.CoinClusterEvent;
 import dk.itu.mario.level.events.Event;
+import dk.itu.mario.level.events.GapEvent;
 import dk.itu.mario.level.events.HillEvent;
+import dk.itu.mario.level.events.TubeClusterEvent;
 
 
 public class EventBasedLevel extends Level {
@@ -24,12 +26,12 @@ public class EventBasedLevel extends Level {
 	    private ArrayList<Event> events = new ArrayList<Event>();
 	    
 	    private double ODDS_STRAIGHT = 0;
-	    private double ODDS_HILL_STRAIGHT = 0.9;
-	    private double ODDS_TUBES = 0;
-	    private double ODDS_JUMPGAP = 0;
+	    private double ODDS_HILL_STRAIGHT = 0.3;
+	    private double ODDS_TUBES = 0.2;
+	    private double ODDS_JUMPGAP = 0.1;
 	    private double ODDS_CANNONS = 0.05;
 	    private double ODDS_ENEMIES = 0;
-	    private double ODDS_COINS = 0.05;
+	    private double ODDS_COINS = 0.35;
 	    private double ODDS_COIN_BLOCK = 0;
 	    private double ODDS_BLOCK = 0;
 	    
@@ -43,7 +45,7 @@ public class EventBasedLevel extends Level {
 	    {
 			super(width, height);
 			groundHeights = new int[width];
-			int numEvents = 2;
+			int numEvents = 100;
 			random = new Random();
 			
 			for (int i = 0; i < numEvents; i++) {
@@ -60,14 +62,12 @@ public class EventBasedLevel extends Level {
 	        renderEvents();
 	        xExit = width - END_WIDTH;
 	        yExit = groundHeights[xExit];
-	        
-
 	    }
 		
 		private Event sampleEvent() {
 			double[] cdf = new double[9];
 			
-			cdf[0] = pmf[1];
+			cdf[0] = pmf[0];
 			
 			for (int i = 1; i < pmf.length; i++) {
 				cdf[i] = cdf[i - 1] + pmf[i];
@@ -83,10 +83,18 @@ public class EventBasedLevel extends Level {
 				}
 			}
 			Event ret = null;
-			if (index == 6) ret = new CoinClusterEvent(6, 2, 10, 0.9);
-			if (index == 4) ret = new CannonClusterEvent(17, 0, 10);
-			if (index == 1) ret = new HillEvent(31, 0, 8);
-			if (index == 0) ret = new HillEvent(31, 0, 8);
+			if (index == 6) 
+				ret = new CoinClusterEvent(random.nextInt(this.width - END_WIDTH) + 1, random.nextInt(3) + 1, random.nextInt(10), 0.8);
+			if (index == 4) 
+				ret = new CannonClusterEvent(random.nextInt(this.width - END_WIDTH) + 1, 0, 10);
+			if (index == 3)
+				ret = new GapEvent(random.nextInt(this.width - END_WIDTH) + 1, random.nextInt(5) + 1);
+			if (index == 2)
+				ret = new TubeClusterEvent(random.nextInt(this.width - END_WIDTH) + 1, 0, random.nextInt(6) + 2);
+			if (index == 1) 
+				ret = new HillEvent(random.nextInt(this.width - END_WIDTH) + 1, 0, random.nextInt(15) + 1);
+			if (index == 0) 
+				ret = new HillEvent(random.nextInt(this.width - END_WIDTH) + 1, 0, random.nextInt(15) + 1);
 			return ret;
 		}
 		
@@ -101,7 +109,10 @@ public class EventBasedLevel extends Level {
 			int anchorX = ev.getX();
 			//int length = ev.getLength();
 			int dy = ev.getDy();
-			
+			if (ev.getX() + ev.getLength() >= this.width) {
+				System.out.println("Invalid Event Placement!");
+				return;
+			}
 			for (int y = 0; y < grid.length; y++) {
 				for (int x = 0; x < grid[0].length; x++) {
 					if (grid[y][x] != 0) {
@@ -127,7 +138,10 @@ public class EventBasedLevel extends Level {
 	        		change = 0;
 	        	}
 	        	
-	        	groundHeights[x] = y; 
+	        	groundHeights[x] = y;
+	        	if (change > 0) {
+	        		groundHeights[x] -= change;
+	        	}
 	        	
 	        	for (int y1 = y; y1 < height; y1++) {
 	        		if (y1 == y) {

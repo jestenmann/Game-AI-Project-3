@@ -12,6 +12,8 @@ public abstract class Event {
 	protected byte[][] grid;
 	protected Random rand;
 	protected boolean composable = false;
+	protected boolean stackable = false;
+	protected boolean stable = false;
 	protected int zIndex = 0;
 	
 	public Event(int x, int dy, int length) {
