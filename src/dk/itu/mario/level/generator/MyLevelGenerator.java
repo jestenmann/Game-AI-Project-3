@@ -7,12 +7,14 @@ import dk.itu.mario.MarioInterface.GamePlay;
 import dk.itu.mario.MarioInterface.LevelGenerator;
 import dk.itu.mario.MarioInterface.LevelInterface;
 import dk.itu.mario.level.CustomizedLevel;
+import dk.itu.mario.level.EventBasedLevel;
 import dk.itu.mario.level.MyLevel;
+import dk.itu.mario.level.SimpleHeightLevel;
 
 public class MyLevelGenerator extends CustomizedLevelGenerator implements LevelGenerator{
 
 	public LevelInterface generateLevel(GamePlay playerMetrics) {
-		LevelInterface level = new MyLevel(320,15,new Random().nextLong(),1,LevelInterface.TYPE_OVERGROUND,playerMetrics);
+		LevelInterface level = new EventBasedLevel(320,15,new Random().nextLong(),1,LevelInterface.TYPE_OVERGROUND,playerMetrics);
 		return level;
 	}
 

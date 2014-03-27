@@ -17,7 +17,7 @@ public class RandomLevel extends Level{
 	 public   int COINS = 0; //These are the coins in boxes that Mario collect
 
  
-	private static Random levelSeedRandom = new Random();
+	 private static Random levelSeedRandom = new Random();
 	    public static long lastSeed;
 
 	    Random random;

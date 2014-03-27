@@ -17,7 +17,7 @@ import dk.itu.mario.engine.sonar.sample.SampleLoader;
 public class SonarSoundEngine implements Runnable
 {
     private SonarSample silentSample;
-    private SourceDataLine sdl;
+    //private SourceDataLine sdl;
     private int rate = 44100;
     private ListenerMixer listenerMixer;
     private int bufferSize = rate / 100; // 10 ms
@@ -34,12 +34,12 @@ public class SonarSoundEngine implements Runnable
     public SonarSoundEngine(int maxChannels) throws LineUnavailableException
     {
         silentSample = new SonarSample(new float[] {0}, 44100);
-        Mixer mixer = AudioSystem.getMixer(null);
+        //Mixer mixer = AudioSystem.getMixer(null);
 
-        sdl = (SourceDataLine) mixer.getLine(new Line.Info(SourceDataLine.class));
-        sdl.open(new AudioFormat(rate, 16, 2, true, false), bufferSize * 2 * 2 * 2 * 2 * 2);
+        //sdl = (SourceDataLine) mixer.getLine(new Line.Info(SourceDataLine.class));
+        //sdl.open(new AudioFormat(rate, 16, 2, true, false), bufferSize * 2 * 2 * 2 * 2 * 2);
         soundBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        sdl.start();
+        //sdl.start();
 
         try
         {
@@ -132,7 +132,7 @@ public class SonarSoundEngine implements Runnable
             soundBuffer.putShort((short)r);
         }
 
-        sdl.write(soundBuffer.array(), 0, bufferSize * 2 * 2);
+        //sdl.write(soundBuffer.array(), 0, bufferSize * 2 * 2);
     }
 
     public void run()
