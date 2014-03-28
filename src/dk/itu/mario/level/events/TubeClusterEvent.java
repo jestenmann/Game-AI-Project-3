@@ -13,6 +13,9 @@ public class TubeClusterEvent extends Event {
 	
 	public TubeClusterEvent(int x, int dy, int length) {
 		super(x, dy, length);
+		this.priority = 0;
+		this.stable = false;
+		this.stackable = true;
 		generate();
 	}
 

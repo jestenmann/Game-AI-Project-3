@@ -7,6 +7,7 @@ public class GapEvent extends Event {
 		this.composable = false;
 		this.stackable = false;
 		this.stable = false;
+		this.priority = 5;
 		generate();
 	}
 

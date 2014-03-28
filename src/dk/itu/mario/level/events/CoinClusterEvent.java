@@ -5,6 +5,9 @@ public class CoinClusterEvent extends Event {
 	public CoinClusterEvent(int x, int dy, int length, double chance) {
 		super(x, dy, length);
 		this.chance = chance;
+		this.priority = 10;
+		this.stable = false;
+		this.stackable = false;
 		generate();
 	}
 

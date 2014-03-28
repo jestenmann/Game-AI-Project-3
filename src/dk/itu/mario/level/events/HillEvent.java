@@ -15,6 +15,9 @@ public class HillEvent extends Event {
     
 	public HillEvent(int x, int dy, int length) {
 		super(x, dy, length);
+		this.priority = 12;
+		this.stable = true;
+		this.stackable = true;
 		generate();
 	}
 

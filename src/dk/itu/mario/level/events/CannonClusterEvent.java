@@ -12,6 +12,9 @@ public class CannonClusterEvent extends Event {
 	public CannonClusterEvent(int x, int dy, int length) {
 		super(x, dy, length);
 		generate();
+		this.stackable = true;
+		this.stable = false;
+		this.priority = 2;
 	}
 
 	@Override
