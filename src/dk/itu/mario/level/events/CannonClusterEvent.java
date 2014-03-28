@@ -7,7 +7,7 @@ public class CannonClusterEvent extends Event {
 	public static final byte CANNON_BOTTOM = (byte)(14 + 2 * 16);
 	public static final byte CANNON_MIDDLE = (byte)(14 + 1 * 16);
 	public static final byte CANNON_TOP = (byte)(14 + 0 * 16);
-	public static final byte MAX_CANNONS = 3;
+	public static final byte MAX_CANNONS = 2;
 	
 	public CannonClusterEvent(int x, int dy, int length) {
 		super(x, dy, length);

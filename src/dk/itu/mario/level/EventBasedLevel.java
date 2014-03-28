@@ -71,20 +71,8 @@ public class EventBasedLevel extends Level {
 		public EventBasedLevel(int width, int height)
 	    {
 			super(width, height);
-			
+			setPmf();
 			groundHeights = new int[width];
-			int numEvents = 150;
-			random = new Random();
-			xOccupier = new Event[this.width + 10];
-			for (int i = 0; i < numEvents; i++) {
-				Event sample = sampleEvent();
-				if (sample != null) {
-					updateXOc(sample);
-					events.add(sample);	
-				} else {
-					System.out.println("Null sample!");
-				}
-			}
 			
 
 	    }
@@ -110,6 +98,19 @@ public class EventBasedLevel extends Level {
             //set the odds now 
             setOdds();
 	        random = new Random();
+	        
+			int numEvents = 150;
+			random = new Random();
+			xOccupier = new Event[this.width + 10];
+			for (int i = 0; i < numEvents; i++) {
+				Event sample = sampleEvent();
+				if (sample != null) {
+					updateXOc(sample);
+					events.add(sample);	
+				} else {
+					System.out.println("Null sample!");
+				}
+			}
 	        
 	        buildGround(11, 0, width);
 	        
@@ -167,15 +168,15 @@ public class EventBasedLevel extends Level {
 			if (index == 8)
 				ret = createBlockCluster();
 			if (index == 6) 
-				ret = new CoinClusterEvent(random.nextInt(this.width - END_WIDTH) + 1, random.nextInt(3) + 1, random.nextInt(10), 0.8);
+				ret = createCoinClusterEvent();
 			if (index == 5) 
-				ret = new EnemyLineEvent(random.nextInt(this.width - END_WIDTH) + 1, 0, random.nextInt(3) + 1, 5, this);
+				ret = new EnemyLineEvent(random.nextInt(this.width - END_WIDTH) + 1, 10, random.nextInt(3) + 1, 5, this);
 			if (index == 4) 
 				ret = createCannonCluster();
 			if (index == 3)
-				ret = new GapEvent(random.nextInt(this.width - END_WIDTH) + 1, random.nextInt(5) + 1);
+				ret = createGapEvent();
 			if (index == 2)
-				ret = new TubeClusterEvent(random.nextInt(this.width - END_WIDTH) + 1, 0, random.nextInt(6) + 2);
+				ret = createTubeCluster();
 			if (index == 1) 
 				ret = createHillEvent();
 			if (index == 0) 
@@ -218,26 +219,11 @@ public class EventBasedLevel extends Level {
 			// try numTries times then give up
 			for (int numTries = 1000; numTries > 0; numTries--) {
 				x = random.nextInt(this.width - END_WIDTH) + 1;
-				length = random.nextInt(6) + 4;
+				length = random.nextInt(5) + 2;
 				boolean succeeded = true;
-				boolean subsucceeded = true;
-				for (int pos = 1; pos < length; pos++) {
-					if (xOccupier[x + pos] != xOccupier[x + pos - 1] || xOccupier[x + pos - 1] == null) {
-						subsucceeded = false;
-					}
-				}
-				
-				if (subsucceeded) {
-					if (x + length - 1 >= this.width)  {
-						System.out.println("[CannonCluster] Out of bounds, returning null!");
-						return null;
-					}
-					return new CannonClusterEvent(x, dy + xOccupier[x].getDy(), length);
-				}
-				
 				for (int pos = 0; pos < length; pos++) {
 					if (x + pos >= this.width)  {
-						System.out.println("[CannonCluster] Out of bounds, returning null!");
+						System.out.println("[Hill] Out of bounds, returning null!");
 						return null;
 					}
 					if (xOccupier[x + pos] != null) {
@@ -247,10 +233,6 @@ public class EventBasedLevel extends Level {
 				}
 				
 				if (succeeded) {
-					if (x + length - 1 >= this.width)  {
-						System.out.println("[CannonCluster] Out of bounds, returning null!");
-						return null;
-					}
 					return new CannonClusterEvent(x, dy, length);
 				}
 			}
@@ -281,6 +263,96 @@ public class EventBasedLevel extends Level {
 				
 				if (succeeded) {
 					return new HillEvent(x, dy, length);
+				}
+			}
+			
+			return null; 
+		}
+		
+		private CoinClusterEvent createCoinClusterEvent() {
+			int x = -1;
+			int dy = 0;
+			int length;
+			
+			// try numTries times then give up
+			for (int numTries = 1000; numTries > 0; numTries--) {
+				x = random.nextInt(this.width - END_WIDTH) + 1;
+				length = random.nextInt(9) + 1;
+				dy = random.nextInt(5) + 1;
+				CoinClusterEvent temp = new CoinClusterEvent(x, dy, length, 0.8);
+				boolean succeeded = true;
+				for (int pos = 0; pos < length; pos++) {
+					if (x + pos >= this.width)  {
+						System.out.println("[CoinCluster] Out of bounds, returning null!");
+						return null;
+					}
+					if (xOccupier[x + pos] != null) {
+						if (temp.intersects(xOccupier[x + pos])) {
+							succeeded = false;
+							break;	
+						}
+					}
+				}
+				
+				if (succeeded) {
+					return new CoinClusterEvent(x, dy, length, 0.8);
+				}
+			}
+			
+			return null; 
+		}
+		
+		private TubeClusterEvent createTubeCluster() {
+			int x = -1;
+			int dy = 0;
+			int length;
+			
+			// try numTries times then give up
+			for (int numTries = 1000; numTries > 0; numTries--) {
+				x = random.nextInt(this.width - END_WIDTH) + 1;
+				length = random.nextInt(6) + 2;
+				boolean succeeded = true;
+				for (int pos = 0; pos < length; pos++) {
+					if (x + pos >= this.width)  {
+						System.out.println("[TubeCluster] Out of bounds, returning null!");
+						return null;
+					}
+					if (xOccupier[x + pos] != null) {
+						succeeded = false;
+						break;
+					}
+				}
+				
+				if (succeeded) {
+					return new TubeClusterEvent(x, dy, length);
+				}
+			}
+			
+			return null; 
+		}
+		
+		private GapEvent createGapEvent() {
+			int x = -1;
+			int length;
+			
+			// try numTries times then give up
+			for (int numTries = 1000; numTries > 0; numTries--) {
+				x = random.nextInt(this.width - END_WIDTH) + 1;
+				length = random.nextInt(5) + 2;
+				boolean succeeded = true;
+				for (int pos = 0; pos < length; pos++) {
+					if (x + pos >= this.width)  {
+						System.out.println("[Hill] Out of bounds, returning null!");
+						return null;
+					}
+					if (xOccupier[x + pos] != null) {
+						succeeded = false;
+						break;
+					}
+				}
+				
+				if (succeeded) {
+					return new GapEvent(x, length);
 				}
 			}
 			
@@ -424,6 +496,8 @@ public class EventBasedLevel extends Level {
                 ODDS_JUMPGAP = 0;
                 ODDS_HILL_STRAIGHT = 0.55;
             }
+            
+            setPmf();
         }
 	    public void identifyPlayer() {
             //match the player to a player type and sets mytype to that
